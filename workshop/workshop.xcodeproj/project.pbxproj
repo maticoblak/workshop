@@ -16,6 +16,8 @@
 		2124413F1B4326E400F407DB /* workshopTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2124413E1B4326E400F407DB /* workshopTests.m */; };
 		2124414B1B43288500F407DB /* MainView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2124414A1B43288500F407DB /* MainView.m */; };
 		2124414F1B432A6E00F407DB /* GlobalTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2124414E1B432A6E00F407DB /* GlobalTools.m */; };
+		212441531B43378A00F407DB /* ColorShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 212441511B43378A00F407DB /* ColorShader.fsh */; };
+		212441541B43378A00F407DB /* ColorShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 212441521B43378A00F407DB /* ColorShader.vsh */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +48,8 @@
 		2124414A1B43288500F407DB /* MainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainView.m; sourceTree = "<group>"; };
 		2124414D1B432A6E00F407DB /* GlobalTools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalTools.h; sourceTree = "<group>"; };
 		2124414E1B432A6E00F407DB /* GlobalTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalTools.m; sourceTree = "<group>"; };
+		212441511B43378A00F407DB /* ColorShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ColorShader.fsh; sourceTree = "<group>"; };
+		212441521B43378A00F407DB /* ColorShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ColorShader.vsh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +133,7 @@
 		212441481B43287400F407DB /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				212441501B43378100F407DB /* Shader sources */,
 				2124414C1B432A6300F407DB /* GlobalTools */,
 				212441491B43288500F407DB /* MainView.h */,
 				2124414A1B43288500F407DB /* MainView.m */,
@@ -143,6 +148,15 @@
 				2124414E1B432A6E00F407DB /* GlobalTools.m */,
 			);
 			path = GlobalTools;
+			sourceTree = "<group>";
+		};
+		212441501B43378100F407DB /* Shader sources */ = {
+			isa = PBXGroup;
+			children = (
+				212441511B43378A00F407DB /* ColorShader.fsh */,
+				212441521B43378A00F407DB /* ColorShader.vsh */,
+			);
+			path = "Shader sources";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -225,9 +239,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				212441531B43378A00F407DB /* ColorShader.fsh in Resources */,
 				2124412E1B4326E400F407DB /* Main.storyboard in Resources */,
 				212441331B4326E400F407DB /* LaunchScreen.xib in Resources */,
 				212441301B4326E400F407DB /* Images.xcassets in Resources */,
+				212441541B43378A00F407DB /* ColorShader.vsh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
