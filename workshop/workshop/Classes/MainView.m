@@ -10,6 +10,7 @@
 @import OpenGLES;
 #import "MainView.h"
 #import "GlobalTools.h"
+#import "BaseShader.h"
 
 @interface MainView()
 
@@ -19,9 +20,7 @@
 @property (nonatomic) GLuint renderBuffer; // id of the main render buffer
 @property (nonatomic) CGSize bufferSize; // size of the main buffer
 
-@property (nonatomic) GLuint shaderProgram; // shader program ID
-@property (nonatomic) GLuint fragmentShader; // fragment shader ID
-@property (nonatomic) GLuint vertexShader; // vertex shader ID
+@property (nonatomic, strong) BaseShader *shader;
 
 @property (nonatomic, strong) CADisplayLink *displayLink; // display link for animation
 
@@ -49,7 +48,9 @@
 {
     [self initializeContext];
     [self initializeFrameAndRenderBuffer];
-    [self initializeShaders];
+    
+    self.shader = [[BaseShader alloc] initWithContext:self.context];
+    [self.shader loadShaderSourceNamed:@"ColorShader"];
     
     self.isInitialized = YES;
 }
@@ -115,7 +116,7 @@
      This might be confusing at this point but a frame buffer might later contain multiple render buffers for instance a color buffer, a depth buffer, a stencil buffer, even a texture...
      The current render buffer is a color buffer.
      */
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _renderBuffer); // attach as color buffer
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, self.renderBuffer); // attach as color buffer
     
     /*
      We need to get the width and height since the render buffer was created for us and do not know its size
@@ -137,140 +138,6 @@
      */
     [GlobalTools framebufferStatusValid]; // will check the currently bound frame buffer if all is ok
     [GlobalTools checkError]; // will check for any other errors
-}
-
-#pragma mark Shaders
-
-- (void)initializeShaders
-{
-    [self compileShader];
-    [self linkShader];
-}
-
-- (GLuint)shaderProgram
-{
-    if(_shaderProgram == 0)
-    {
-        /*
-         A program may carry multiple shaders such as in our case one fragment and one vertex shader
-         */
-        _shaderProgram = glCreateProgram();
-    }
-    return _shaderProgram;
-}
-
-/*! Compile shaders
- @discussion This method will retrieve shader source code from the TXT files and send it to the GPU. The GPU will then try to compile the shaders and if successfull they may be used.
- */
-- (BOOL)compileShader
-{
-    /*
-     define paths
-     */
-    NSString *vertexShaderPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"ColorShader.vsh"]; // vertex shader path
-    NSString *fragmentShaderPath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"ColorShader.fsh"]; // fragment shader path
-    
-    GLint status; // will check the status once compiled
-    NSString *shaderSourceString = nil; // the source string received from the file
-    
-// vertex shader
-    shaderSourceString = [NSString stringWithContentsOfFile:vertexShaderPath encoding:NSUTF8StringEncoding error:nil]; // get string from file
-    const GLchar *sString = (GLchar *)[shaderSourceString UTF8String]; // convert to C string
-    self.vertexShader = glCreateShader(GL_VERTEX_SHADER); // create vertex shader
-    glShaderSource(self.vertexShader, 1, &sString, NULL); // set shader source data
-    glCompileShader(self.vertexShader); // compile the shader
-    
-    /*
-     Get the compile log from the shader
-     */
-    GLint logLength = 0;
-    glGetShaderiv(self.vertexShader, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0) {
-        GLchar *log = malloc(sizeof(GLchar)*logLength);
-        glGetShaderInfoLog(_vertexShader, logLength, &logLength, log);
-        NSString *logString = [NSString stringWithCString:log encoding:NSUTF8StringEncoding];
-        NSLog(@"Vertex shader compile log:\n%@", logString);
-        free(log);
-    }
-
-    /*
-     Get the compile status from the shader
-     */
-    glGetShaderiv(self.vertexShader, GL_COMPILE_STATUS, &status);
-    if (status == 0) {
-        glDeleteShader(self.vertexShader);
-        self.vertexShader = 0;
-        return NO;
-    }
-//fragment shader
-    
-    /*
-     All the same as with the vertex shader (but using GL_FRAGMENT_SHADER)
-     */
-    shaderSourceString = [NSString stringWithContentsOfFile:fragmentShaderPath encoding:NSUTF8StringEncoding error:nil];
-    if (!shaderSourceString || shaderSourceString.length == 0) {
-        NSLog(@"Failed to load fragment shader string");
-        return NO;
-    }
-    sString = (GLchar *)[shaderSourceString UTF8String];
-    self.fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(self.fragmentShader, 1, &sString, NULL);
-    glCompileShader(self.fragmentShader);
-    
-    logLength = 0;
-    glGetShaderiv(self.fragmentShader, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0) {
-        GLchar *log = malloc(sizeof(GLchar)*logLength);
-        glGetShaderInfoLog(self.fragmentShader, logLength, &logLength, log);
-        NSString *logString = [NSString stringWithCString:log encoding:NSUTF8StringEncoding];
-        NSLog(@"Fragment shader compile log:\n%@", logString);
-        free(log);
-    }
-
-    glGetShaderiv(self.fragmentShader, GL_COMPILE_STATUS, &status);
-    if (status == 0) {
-        glDeleteShader(self.fragmentShader);
-        self.fragmentShader = 0;
-        return NO;
-    }
-    
-    return YES;
-}
-/*! Linking the shaders
- @discussion At this point the compiled shaders will be attached to the program and linked together to create a usable unit.
- */
-- (BOOL)linkShader
-{
-    glAttachShader(self.shaderProgram, self.vertexShader); // attach vertex shader
-    glAttachShader(self.shaderProgram, self.fragmentShader); // attach fragment shader
-    
-    GLint status;
-    glLinkProgram(self.shaderProgram); // link all together
-
-    /*
-     Check log
-     */
-    GLint logLength = 0;
-    glGetProgramiv(self.shaderProgram, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 0) {
-        GLchar *log = malloc(sizeof(GLchar)*logLength);
-        glGetProgramInfoLog(self.shaderProgram, logLength, &logLength, log);
-        NSLog(@"Program link log:\n%s", log);
-        free(log);
-    }
-    /*
-     Check status
-     */
-    glGetProgramiv(self.shaderProgram, GL_LINK_STATUS, &status);
-    if (status == 0) {
-        return NO;
-    }
-    
-    /*
-     At this point we have a program on the GPU which can be run on the GPU.
-     */
-    
-    return YES;
 }
 
 #pragma mark - animation
@@ -348,63 +215,20 @@
  */
 - (void)drawShape
 {
-    /*
-     We need to specify what program shoul the GPU run for the drawing
-     */
-    glUseProgram(self.shaderProgram);
+    [self.shader use];
     
-    /*
-     To access the values in the shader we will need to search them by string in the source code.
-     There are 2 different types:
-     - Attributes: These are values that are applied for every vertex such as position
-     - Uniforms: These are values that are applied for every draw call such as color
-     
-     So in this case we have a triangle with 3 vertices. Each has a different position but all have the same color. Ergo a position is an attribute and the color is an uniform
-     */
-    int positionAttribute = glGetAttribLocation(self.shaderProgram, "attPosition"); // get attribute position
-    glEnableVertexAttribArray(positionAttribute); // every attribute must be explicitly enabled (can be done only once to gain performance)
-    
-    /*
-     Just generate some position data.
-     We will use 3 dimensions but could easily use 2 for this case.
-     
-     Note that the default coordinate system is in range [-1, 1] for all axises. That means (0,0,0) is in the center of the screen.
-     Top = 1, bottom = -1, left = -1, right = 1
-     */
-    GLfloat vertexData[3][3] = {
-        .0f, .0f, .0f,
-        .0f, 1.0f, .0f,
-        1.0f, .0f, .0f
+    GLfloat vertexData[] = {
+        -0.8f, -0.3f, .0f,
+        0.8f, -0.3f, .0f,
+        0.0f, .5f, .0f
     };
+
+    [self.shader setVertexPositionsPointer:vertexData withDimension:3 stride:0];
+    [self.shader setColor:[UIColor greenColor]];
     
-    /*
-     Tha data pointer must be set to the GPU for where the positions are stored and what kind of data it should expect.
-     These data must persist until the draw call is completed so if the draw call is in another method they should be stored as a property for NSData object for instance.
-     */
-    glVertexAttribPointer(positionAttribute, // a previously gotten index for the position in the shader
-                          3, // number of dimensions
-                          GL_FLOAT, // what type of data are we having (GLfloat)
-                          GL_FALSE, // normalization is usefull for normals, never for positions
-                          0, // zero means tightly packed (one vertex after another) otherwise number of bytes between the 2 vertex data which in this case would be 3*sizof(GLfloat)
-                          vertexData // the data pointer
-                          );
-    
-    /*
-     Set some color.
-     Will get the location of the color uniform and set the RGBA values for it
-     */
-    glUniform4f(glGetUniformLocation(self.shaderProgram, "uniformColor"), .0f, .2f, .4f, 1.0f);
-    
-    /*
-     The actual drawing
-     We need to specify what shape we are drawing. This could be triangles, lines, points...
-     We need to specify the starting position index (0 is first)
-     We need to specify the number of vertices we will be drawing
-     */
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
     
     [GlobalTools checkError]; // check for possible errors
-    
     
     /*
      Now try a line that is animated
@@ -412,13 +236,15 @@
     static CGFloat angle = .0f;
     CGFloat radius = .5f;
     angle += .01f; // will increase each frame
-    GLfloat linePositions[2][2] = {
+    GLfloat linePositions[] = {
         .0f, .0f,
         sinf(angle)*radius, cosf(angle)*radius
     };
     glLineWidth(12.0f); // meed to set some line width
-    glVertexAttribPointer(positionAttribute, 2, GL_FLOAT, GL_FALSE, 0, linePositions);
-    glUniform4f(glGetUniformLocation(self.shaderProgram, "uniformColor"), 1.0f, .0f, .0f, 1.0f);
+    
+    [self.shader setVertexPositionsPointer:linePositions withDimension:2 stride:0];
+    [self.shader setColor:[UIColor redColor]];
+    
     glDrawArrays(GL_LINE_STRIP, 0, 2);
 }
 
