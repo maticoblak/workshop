@@ -18,6 +18,7 @@
 		2124414F1B432A6E00F407DB /* GlobalTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2124414E1B432A6E00F407DB /* GlobalTools.m */; };
 		212441531B43378A00F407DB /* ColorShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 212441511B43378A00F407DB /* ColorShader.fsh */; };
 		212441541B43378A00F407DB /* ColorShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 212441521B43378A00F407DB /* ColorShader.vsh */; };
+		6CF2A1A51B46B6F300D2DD3A /* FrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CF2A1A41B46B6F300D2DD3A /* FrameBuffer.m */; };
 		8A9EF6F81B469B6C0072C256 /* WSContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9EF6F71B469B6C0072C256 /* WSContext.m */; };
 		8A9EF6FB1B46A1B70072C256 /* WSOperationContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9EF6FA1B46A1B70072C256 /* WSOperationContainer.m */; };
 /* End PBXBuildFile section */
@@ -52,6 +53,8 @@
 		2124414E1B432A6E00F407DB /* GlobalTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalTools.m; sourceTree = "<group>"; };
 		212441511B43378A00F407DB /* ColorShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ColorShader.fsh; sourceTree = "<group>"; };
 		212441521B43378A00F407DB /* ColorShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ColorShader.vsh; sourceTree = "<group>"; };
+		6CF2A1A31B46B6F300D2DD3A /* FrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameBuffer.h; path = Buffers/FrameBuffer.h; sourceTree = "<group>"; };
+		6CF2A1A41B46B6F300D2DD3A /* FrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FrameBuffer.m; path = Buffers/FrameBuffer.m; sourceTree = "<group>"; };
 		8A9EF6F61B469B6C0072C256 /* WSContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WSContext.h; path = Context/WSContext.h; sourceTree = "<group>"; };
 		8A9EF6F71B469B6C0072C256 /* WSContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WSContext.m; path = Context/WSContext.m; sourceTree = "<group>"; };
 		8A9EF6F91B46A1B70072C256 /* WSOperationContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WSOperationContainer.h; sourceTree = "<group>"; };
@@ -139,6 +142,7 @@
 		212441481B43287400F407DB /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				6CF2A1A21B46B6E800D2DD3A /* Buffer */,
 				8A9EF6F21B469AF00072C256 /* Context */,
 				212441501B43378100F407DB /* Shader sources */,
 				2124414C1B432A6300F407DB /* GlobalTools */,
@@ -164,6 +168,15 @@
 				212441521B43378A00F407DB /* ColorShader.vsh */,
 			);
 			path = "Shader sources";
+			sourceTree = "<group>";
+		};
+		6CF2A1A21B46B6E800D2DD3A /* Buffer */ = {
+			isa = PBXGroup;
+			children = (
+				6CF2A1A31B46B6F300D2DD3A /* FrameBuffer.h */,
+				6CF2A1A41B46B6F300D2DD3A /* FrameBuffer.m */,
+			);
+			name = Buffer;
 			sourceTree = "<group>";
 		};
 		8A9EF6F21B469AF00072C256 /* Context */ = {
@@ -284,6 +297,7 @@
 				2124412B1B4326E400F407DB /* ViewController.m in Sources */,
 				2124414B1B43288500F407DB /* MainView.m in Sources */,
 				8A9EF6F81B469B6C0072C256 /* WSContext.m in Sources */,
+				6CF2A1A51B46B6F300D2DD3A /* FrameBuffer.m in Sources */,
 				212441281B4326E400F407DB /* AppDelegate.m in Sources */,
 				212441251B4326E400F407DB /* main.m in Sources */,
 			);
