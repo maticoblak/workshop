@@ -10,11 +10,11 @@
 @import OpenGLES;
 #import "MainView.h"
 #import "GlobalTools.h"
+#import "WSContext.h"
 
 @interface MainView()
 
-@property (nonatomic, strong) EAGLContext *context; // main context
-
+@property (nonatomic, strong) WSContext *contextObject;
 @property (nonatomic) GLuint frameBuffer; // id of the main frame buffer
 @property (nonatomic) GLuint renderBuffer; // id of the main render buffer
 @property (nonatomic) CGSize bufferSize; // size of the main buffer
@@ -47,30 +47,14 @@
  */
 - (void)initializeOpenGL
 {
-    [self initializeContext];
-    [self initializeFrameAndRenderBuffer];
-    [self initializeShaders];
-    
-    self.isInitialized = YES;
+    self.contextObject = [[WSContext alloc] init];
+   
+    [self.contextObject performBlock:^{
+        [self initializeFrameAndRenderBuffer];
+        [self initializeShaders];
+    }];
 }
 
-#pragma mark context
-
-/*! Generate a context
- @discussion A context must be crated and set as current to be able to do anything with th openGL
- */
-- (void)initializeContext
-{
-    /*
-     Context is initialized with the version you are going to use. We will use ES2.
-     After you have your main context another may be created using the previous' share group to share resources. This is very useful for heavy operations to be used in background thread such as texture loading.
-     */
-    self.context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
-/*
-    Set context is per thread as this is its main reason for existance. You should idealy have 1 context per thread which uses the openGL. Multiple contexts on the same thread are valid but you need to set it every time as current. Using a context on multiple thread is something you should never do but is still possible.
- */
-    [EAGLContext setCurrentContext:self.context];
-}
 
 #pragma mark buffers
 
@@ -107,7 +91,7 @@
      We will allocate it to be bound with the view and have appropriate format.
      This is mandatory for the render buffers bound to an UIView
      */
-    [self.context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer]; // will allocate the data on the GPU
+    [self.contextObject.glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer]; // will allocate the data on the GPU
     
     /*
      We need to attach the render buffer to the frame buffer to be used.
@@ -115,7 +99,7 @@
      This might be confusing at this point but a frame buffer might later contain multiple render buffers for instance a color buffer, a depth buffer, a stencil buffer, even a texture...
      The current render buffer is a color buffer.
      */
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, _renderBuffer); // attach as color buffer
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, self.renderBuffer); // attach as color buffer
     
     /*
      We need to get the width and height since the render buffer was created for us and do not know its size
@@ -312,9 +296,12 @@
  */
 - (void)drawFrame
 {
-    [self clearBackground]; // clear the background
-    [self drawShape]; // draw some shape
-    [self presetnRenderbuffer]; // show the current buffer on screen
+    [self.contextObject performBlock:^{
+        [self clearBackground]; // clear the background
+        [self drawShape]; // draw some shape
+    }];
+    
+    [self.contextObject presentRenderBufferWithID:self.renderBuffer]; // show the current buffer on screen
 }
 
 - (void)clearBackground
@@ -338,12 +325,6 @@
     [GlobalTools checkError]; // check for possible errors
 }
 
-- (void)presetnRenderbuffer
-{
-    [self.context presentRenderbuffer:self.renderBuffer]; // will present the buffer on the screen
-    [GlobalTools checkError]; // check for possible errors
-}
-
 /*! Draw some test shape
  */
 - (void)drawShape
@@ -361,7 +342,7 @@
      
      So in this case we have a triangle with 3 vertices. Each has a different position but all have the same color. Ergo a position is an attribute and the color is an uniform
      */
-    int positionAttribute = glGetAttribLocation(self.shaderProgram, "attPosition"); // get attribute position
+    GLint positionAttribute = glGetAttribLocation(self.shaderProgram, "attPosition"); // get attribute position
     glEnableVertexAttribArray(positionAttribute); // every attribute must be explicitly enabled (can be done only once to gain performance)
     
     /*
@@ -372,9 +353,10 @@
      Top = 1, bottom = -1, left = -1, right = 1
      */
     GLfloat vertexData[3][3] = {
-        .0f, .0f, .0f,
+        -1.0f, 1.0f, .0f,
         .0f, 1.0f, .0f,
-        1.0f, .0f, .0f
+        1.0f, .0f, .0f,
+
     };
     
     /*
@@ -401,7 +383,7 @@
      We need to specify the starting position index (0 is first)
      We need to specify the number of vertices we will be drawing
      */
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 3);
     
     [GlobalTools checkError]; // check for possible errors
     
