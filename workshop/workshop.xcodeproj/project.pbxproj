@@ -18,7 +18,8 @@
 		2124414F1B432A6E00F407DB /* GlobalTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 2124414E1B432A6E00F407DB /* GlobalTools.m */; };
 		212441531B43378A00F407DB /* ColorShader.fsh in Resources */ = {isa = PBXBuildFile; fileRef = 212441511B43378A00F407DB /* ColorShader.fsh */; };
 		212441541B43378A00F407DB /* ColorShader.vsh in Resources */ = {isa = PBXBuildFile; fileRef = 212441521B43378A00F407DB /* ColorShader.vsh */; };
-		21F19ED01BAC3AE3004E898F /* FrameBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 21F19ECF1BAC3AE3004E898F /* FrameBuffer.m */; settings = {ASSET_TAGS = (); }; };
+		21F19ED01BAC3AE3004E898F /* (null) in Sources */ = {isa = PBXBuildFile; settings = {ASSET_TAGS = (); }; };
+		21F19ED41BAC3CBF004E898F /* BaseShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 21F19ED31BAC3CBF004E898F /* BaseShader.m */; settings = {ASSET_TAGS = (); }; };
 		8A9EF6F81B469B6C0072C256 /* WSContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9EF6F71B469B6C0072C256 /* WSContext.m */; };
 		8A9EF6FB1B46A1B70072C256 /* WSOperationContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A9EF6FA1B46A1B70072C256 /* WSOperationContainer.m */; };
 /* End PBXBuildFile section */
@@ -53,8 +54,8 @@
 		2124414E1B432A6E00F407DB /* GlobalTools.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GlobalTools.m; sourceTree = "<group>"; };
 		212441511B43378A00F407DB /* ColorShader.fsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ColorShader.fsh; sourceTree = "<group>"; };
 		212441521B43378A00F407DB /* ColorShader.vsh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ColorShader.vsh; sourceTree = "<group>"; };
-		6CF2A1A31B46B6F300D2DD3A /* FrameBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FrameBuffer.h; path = Buffers/FrameBuffer.h; sourceTree = "<group>"; };
-		6CF2A1A41B46B6F300D2DD3A /* FrameBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FrameBuffer.m; path = Buffers/FrameBuffer.m; sourceTree = "<group>"; };
+		21F19ED21BAC3CBF004E898F /* BaseShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseShader.h; sourceTree = "<group>"; };
+		21F19ED31BAC3CBF004E898F /* BaseShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseShader.m; sourceTree = "<group>"; };
 		8A9EF6F61B469B6C0072C256 /* WSContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WSContext.h; path = Context/WSContext.h; sourceTree = "<group>"; };
 		8A9EF6F71B469B6C0072C256 /* WSContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WSContext.m; path = Context/WSContext.m; sourceTree = "<group>"; };
 		8A9EF6F91B46A1B70072C256 /* WSOperationContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WSOperationContainer.h; sourceTree = "<group>"; };
@@ -142,6 +143,7 @@
 		212441481B43287400F407DB /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				21F19ED11BAC3CBF004E898F /* Shaders */,
 				21F19ECD1BAC3AE3004E898F /* Buffers */,
 				8A9EF6F21B469AF00072C256 /* Context */,
 				212441501B43378100F407DB /* Shader sources */,
@@ -173,10 +175,17 @@
 		21F19ECD1BAC3AE3004E898F /* Buffers */ = {
 			isa = PBXGroup;
 			children = (
-				21F19ECE1BAC3AE3004E898F /* FrameBuffer.h */,
-				21F19ECF1BAC3AE3004E898F /* FrameBuffer.m */,
 			);
 			path = Buffers;
+			sourceTree = "<group>";
+		};
+		21F19ED11BAC3CBF004E898F /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				21F19ED21BAC3CBF004E898F /* BaseShader.h */,
+				21F19ED31BAC3CBF004E898F /* BaseShader.m */,
+			);
+			path = Shaders;
 			sourceTree = "<group>";
 		};
 		8A9EF6F21B469AF00072C256 /* Context */ = {
@@ -296,8 +305,9 @@
 				2124414F1B432A6E00F407DB /* GlobalTools.m in Sources */,
 				2124412B1B4326E400F407DB /* ViewController.m in Sources */,
 				2124414B1B43288500F407DB /* MainView.m in Sources */,
+				21F19ED41BAC3CBF004E898F /* BaseShader.m in Sources */,
 				8A9EF6F81B469B6C0072C256 /* WSContext.m in Sources */,
-				21F19ED01BAC3AE3004E898F /* FrameBuffer.m in Sources */,
+				21F19ED01BAC3AE3004E898F /* (null) in Sources */,
 				212441281B4326E400F407DB /* AppDelegate.m in Sources */,
 				212441251B4326E400F407DB /* main.m in Sources */,
 			);
