@@ -8,13 +8,14 @@
 
 #import "FrameBuffer.h"
 #import "GlobalTools.h"
+#import "WSContext.h"
 
 @import GLKit;
 @import OpenGLES;
 
 @interface FrameBuffer ()
 
-@property (nonatomic, strong) EAGLContext *context;
+@property (nonatomic, strong) WSContext *context;
 @property (nonatomic, weak) UIView *view;
 
 @property (nonatomic) GLuint frameBuffer;
@@ -25,7 +26,23 @@
 
 @implementation FrameBuffer
 
-- (instancetype)initWithContext:(EAGLContext *)context
+- (void)dealloc
+{
+    GLuint frameBuffer = self.frameBuffer;
+    GLuint renderBuffer = self.renderBuffer;
+    [self.context performBlock:^{
+        if(frameBuffer)
+        {
+            glDeleteFramebuffers(1, &frameBuffer);
+        }
+        if(renderBuffer)
+        {
+            glDeleteFramebuffers(1, &renderBuffer);
+        }
+    }];
+}
+
+- (instancetype)initWithContext:(WSContext *)context
 {
     if (self = [super init])
     {
@@ -56,7 +73,7 @@
     self.renderBuffer = renderBuffer; // assign to store as the local variable
     [self bindRenderBuffer];
     
-    [self.context renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
+    [self.context.glContext renderbufferStorage:GL_RENDERBUFFER fromDrawable:layer];
     
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, self.renderBuffer);
     
@@ -84,7 +101,7 @@
 
 - (void)present
 {
-    [self.context presentRenderbuffer:self.renderBuffer];
+    [self.context.glContext presentRenderbuffer:self.renderBuffer];
     [GlobalTools checkError];
 }
 

@@ -9,6 +9,7 @@
 @import GLKit;
 @import OpenGLES;
 
+#import "WSContext.h"
 #import "BaseShader.h"
 
 typedef enum : NSUInteger {
@@ -27,7 +28,7 @@ typedef enum : NSUInteger {
     GLint shaderUniformIds[shaderUniformCount];
 }
 
-@property (nonatomic, strong) EAGLContext *context;
+@property (nonatomic, strong) WSContext *context;
 
 @property (nonatomic, strong) NSString *shaderSourceName;
 
@@ -95,7 +96,7 @@ typedef enum : NSUInteger {
     return self;
 }
 
-- (instancetype)initWithContext:(EAGLContext *)context
+- (instancetype)initWithContext:(WSContext *)context
 {
     self = [self init];
     
@@ -109,20 +110,26 @@ typedef enum : NSUInteger {
 
 - (void)dealloc
 {
-    if (self.vertexShader)
-    {
-        glDeleteShader(self.vertexShader);
-    }
+    GLuint vertexShader = self.vertexShader;
+    GLuint fragmentShader = self.fragmentShader;
+    GLuint shaderProgram = self.shaderProgram;
+    [self.context performBlock:^{
+        if (vertexShader)
+        {
+            glDeleteShader(vertexShader);
+        }
+        
+        if (fragmentShader)
+        {
+            glDeleteShader(fragmentShader);
+        }
+        
+        if (shaderProgram)
+        {
+            glDeleteProgram(shaderProgram);
+        }
+    }];
     
-    if (self.fragmentShader)
-    {
-        glDeleteShader(self.fragmentShader);
-    }
-    
-    if (self.shaderProgram)
-    {
-        glDeleteProgram(self.shaderProgram);
-    }
 }
 
 - (BOOL)loadShaderSourceNamed:(NSString *)sourceName

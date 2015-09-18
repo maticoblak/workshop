@@ -10,13 +10,14 @@
 
 @import GLKit;
 @import OpenGLES;
+@class WSContext;
 
 @interface FrameBuffer : NSObject
 
 @property (nonatomic, strong) UIColor *backgroundClearColor;
 @property (nonatomic, readonly) CGSize bufferSize; // size of the main buffer
 
-- (instancetype)initWithContext:(EAGLContext *)context;
+- (instancetype)initWithContext:(WSContext *)context;
 - (void)loadBuffersWithView:(UIView *)view;
 
 - (void)bindFrameBuffer;

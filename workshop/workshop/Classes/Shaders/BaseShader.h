@@ -10,10 +10,11 @@
 
 @class GLKit;
 @class OpenGLES;
+@class WSContext;
 
 @interface BaseShader : NSObject
 
-- (instancetype)initWithContext:(EAGLContext *)context;
+- (instancetype)initWithContext:(WSContext *)context;
 - (BOOL)loadShaderSourceNamed:(NSString *)sourceName;
 - (void)use;
 - (void)setVertexPositionsPointer:(GLfloat *)vertexPositionsPointer withDimension:(GLfloat)dimension stride:(GLsizei)stride;
